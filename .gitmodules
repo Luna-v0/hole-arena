@@ -2,3 +2,4 @@
 [submodule "backend"]
 	path = backend
 	url = git@github.com:Luna-v0/hole_rl.git
+	branch = main
