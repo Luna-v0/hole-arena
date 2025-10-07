@@ -1,8 +1,8 @@
-# Buraco Card Game Rules
+# Hole Card Game Rules
 
 ## Objective
 
-The main goal in Buraco is to score points by creating combinations of cards, called melds. The game is typically played in pairs (4 players) or head-to-head (2 players). The team or player with the most points at the end of the game wins.
+The main goal in Hole is to score points by creating combinations of cards, called melds. The game is typically played in pairs (4 players) or head-to-head (2 players). The team or player with the most points at the end of the game wins.
 
 ## Setup
 
@@ -25,10 +25,7 @@ Players take turns in a clockwise direction. A turn consists of the following ac
 
 ## Melds
 
-Melds are combinations of three or more cards. There are two types of melds:
-
-- **Sets:** Three or more cards of the same rank (e.g., three Kings).
-- **Sequences (Runs):** Three or more cards of the same suit in sequential order (e.g., 4, 5, 6 of hearts).
+Melds are combinations of three or more cards of the same suit in sequential order (e.g., 4, 5, 6 of hearts).
 
 ### Wild Cards
 
@@ -36,12 +33,12 @@ Melds are combinations of three or more cards. There are two types of melds:
 - A meld containing a wild card is called a **"Dirty" meld** (or *sporco*).
 - A meld with no wild cards is a **"Clean" meld** (or *pulito*).
 
-## Buraco
+## Hole
 
-A meld that consists of seven or more cards is called a **Buraco**. Buracos give bonus points and are essential for ending the game.
+A meld that consists of seven or more cards is called a **Hole**. Holes give bonus points and are essential for ending the game.
 
-- **Clean Buraco:** A Buraco with no wild cards. It is worth 200 points.
-- **Dirty Buraco:** A Buraco that includes a wild card. It is worth 100 points.
+- **Clean Hole:** A Hole with no wild cards. It is worth 200 points.
+- **Dirty Hole:** A Hole that includes a wild card. It is worth 100 points.
 
 ## Taking the Pot
 
@@ -53,12 +50,12 @@ A meld that consists of seven or more cards is called a **Buraco**. Buracos give
 To end, or "close," a round, a player's team must meet these conditions:
 
 1.  They must have already taken their pot.
-2.  They must have created at least one Buraco.
+2.  They must have created at least one Hole.
 3.  A player must get rid of all the cards in their hand, ending by discarding a final card. This final discard cannot be a wild card.
 
 ## Scoring
 
-Points are awarded based on the cards in a team's melds, as well as for Buracos and other bonuses.
+Points are awarded based on the cards in a team's melds, as well as for Holes and other bonuses.
 
 ### Card Values
 
@@ -70,8 +67,8 @@ Points are awarded based on the cards in a team's melds, as well as for Buracos 
 
 ### Bonus Points
 
-- **Clean Buraco:** 200 points
-- **Dirty Buraco:** 100 points
+- **Clean Hole:** 200 points
+- **Dirty Hole:** 100 points
 - **Going out (Closing):** 100 points
 
 At the end of the round, the value of all cards in each team's melds are added to their score, along with any bonus points. The value of any cards left in a player's hand is subtracted from their team's score.
