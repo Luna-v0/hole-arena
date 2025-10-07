@@ -10,6 +10,7 @@ COMMIT_MESSAGE="$1"
 # Commit and push changes in the submodule
 if [ -d "backend" ]; then
   echo "Committing changes in submodule 'backend'..."
+  rm -f /mnt/hdd1/Repos/hole_arena/.git/modules/backend/index.lock
   cd backend
   git add .
   git commit -m "$COMMIT_MESSAGE"
