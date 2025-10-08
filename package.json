@@ -1,0 +1,23 @@
+{
+  "name": "hole_arena",
+  "version": "1.0.0",
+  "description": "Buraco card game with bot AI testing platform",
+  "scripts": {
+    "test:e2e": "npx playwright test",
+    "test:e2e:ui": "npx playwright test --ui",
+    "test:e2e:debug": "npx playwright test --debug",
+    "test:e2e:headed": "npx playwright test --headed",
+    "test:e2e:report": "npx playwright show-report"
+  },
+  "keywords": [
+    "buraco",
+    "card-game",
+    "ai",
+    "reinforcement-learning"
+  ],
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "@playwright/test": "^1.56.0"
+  }
+}

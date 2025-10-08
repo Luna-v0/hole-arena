@@ -128,6 +128,12 @@ export const useGame = (gameId?: string, playerId?: string | null) => {
     }
   }, [playerId]);
 
+  const playBotTurn = useCallback(() => {
+    if (ws.current) {
+      ws.current.send(JSON.stringify({ action: 'PLAY_BOT_TURN' }));
+    }
+  }, []);
+
   useEffect(() => {
     if (!gameId) return;
 
@@ -166,5 +172,5 @@ export const useGame = (gameId?: string, playerId?: string | null) => {
     };
   }, [gameId, fetchGameState]);
 
-  return { gameState, error, joinGame, startGame, createMeld, addToMeld, drawFromDeck, discardCard, takeDiscardPile };
+  return { gameState, error, joinGame, startGame, createMeld, addToMeld, drawFromDeck, discardCard, takeDiscardPile, playBotTurn };
 };

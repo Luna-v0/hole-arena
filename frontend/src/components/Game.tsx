@@ -20,6 +20,7 @@ export const Game = () => {
     drawFromDeck,
     discardCard,
     takeDiscardPile,
+    playBotTurn,
   } = useGame(gameId, playerId);
   // Auto-start logic: More robust approach
   const hasAttemptedAutoStartRef = useRef(false);

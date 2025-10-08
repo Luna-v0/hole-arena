@@ -49,12 +49,32 @@ export const GameConfigurator = () => {
 
   const totalPlayers = humanPlayers + bots.length;
 
-  const handlePreset = (numBots: number, numHumans: number) => {
-    const presetBots: Bot[] = [];
-    for (let i = 0; i < numBots; i++) {
-      presetBots.push({ name: `Bot ${i + 1}`, algorithm: 'random' });
+  const handlePreset = async (numBots: number, numHumans: number) => {
+    // If it's a bot-only game, use the create_and_start_bot_game endpoint
+    if (numHumans === 0) {
+      try {
+        const response = await fetch(`${BASE_URL}/games/create_and_start_bot_game`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ bot_players: numBots }),
+        });
+        if (!response.ok) {
+          throw new Error('Failed to create bot game');
+        }
+        const data = await response.json();
+        navigate(`/game/${data.game_id}`);
+      } catch (err) {
+        console.error(err);
+      }
+    } else {
+      const presetBots: Bot[] = [];
+      for (let i = 0; i < numBots; i++) {
+        presetBots.push({ name: `Bot ${i + 1}`, algorithm: 'random' });
+      }
+      handleCreateGame(presetBots, numHumans);
     }
-    handleCreateGame(presetBots, numHumans);
   };
 
   return (
