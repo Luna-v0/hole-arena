@@ -2,7 +2,7 @@
 import type { Card as CardType } from '../types';
 import { DiscardPile } from './DiscardPile';
 
-export const Deck = ({ deck, discardPile, drawFromDeck, discardCard }: { deck: { cards: CardType[] }, discardPile: CardType[], drawFromDeck: () => void, discardCard: (card: CardType) => void }) => {
+export const Deck = ({ deck, discardPile, drawFromDeck, discardCard, takeDiscardPile }: { deck: { cards: CardType[] }, discardPile: CardType[], drawFromDeck: () => void, discardCard: (card: CardType) => void, takeDiscardPile: () => void }) => {
   return (
     <div>
       <button onClick={drawFromDeck}>Draw from Deck</button>
@@ -10,6 +10,7 @@ export const Deck = ({ deck, discardPile, drawFromDeck, discardCard }: { deck: {
         Deck ({deck.cards.length})
       </div>
 
+      <button onClick={takeDiscardPile}>Take Discard Pile</button>
       <DiscardPile discardPile={discardPile} onDrop={discardCard} />
     </div>
   );

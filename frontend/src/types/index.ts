@@ -5,12 +5,14 @@ export type Card = {
 };
 
 export type Meld = {
-  id: number;
+  id: string;
   cards: Card[];
 };
 
 export type Player = {
+  player_id: string;
   name: string;
+  is_bot: boolean;
   hand: Card[];
   melds: Meld[];
   score: number;

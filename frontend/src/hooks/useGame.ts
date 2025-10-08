@@ -3,7 +3,7 @@ import type { GameState, Player, Card } from '../types/index';
 
 const BASE_URL = 'http://localhost:8000';
 
-export const useGame = (gameId?: string) => {
+export const useGame = (gameId?: string, playerId?: string | null) => {
   const [gameState, setGameState] = useState<GameState | null>(null);
   const [error, setError] = useState<string | null>(null);
   const ws = useRef<WebSocket | null>(null);
@@ -35,7 +35,8 @@ export const useGame = (gameId?: string) => {
       if (!response.ok) {
         throw new Error('Failed to join game');
       }
-      // The full game state will be updated via WebSocket
+      const player: Player = await response.json();
+      return player;
     } catch (err) {
       setError(err instanceof Error ? err.message : 'An unknown error occurred');
     }
@@ -57,28 +58,34 @@ export const useGame = (gameId?: string) => {
   }, [gameId]);
 
   const createMeld = useCallback((cards: Card[]) => {
-    if (ws.current) {
-      ws.current.send(JSON.stringify({ action: 'CREATE_MELD', payload: { cards } }));
+    if (ws.current && playerId) {
+      ws.current.send(JSON.stringify({ action: 'CREATE_MELD', cards, player_id: playerId }));
     }
-  }, []);
+  }, [playerId]);
 
   const addToMeld = useCallback((meldId: number, card: Card) => {
-    if (ws.current) {
-      ws.current.send(JSON.stringify({ action: 'ADD_TO_MELD', payload: { meld_id: meldId, card } }));
+    if (ws.current && playerId) {
+      ws.current.send(JSON.stringify({ action: 'ADD_TO_MELD', meld_id: meldId, card, player_id: playerId }));
     }
-  }, []);
+  }, [playerId]);
 
   const drawFromDeck = useCallback(() => {
-    if (ws.current) {
-      ws.current.send(JSON.stringify({ action: 'DRAW_FROM_DECK' }));
+    if (ws.current && playerId) {
+      ws.current.send(JSON.stringify({ action: 'DRAW_FROM_DECK', player_id: playerId }));
     }
-  }, []);
+  }, [playerId]);
 
   const discardCard = useCallback((card: Card) => {
-    if (ws.current) {
-      ws.current.send(JSON.stringify({ action: 'DISCARD_CARD', payload: { card } }));
+    if (ws.current && playerId) {
+      ws.current.send(JSON.stringify({ action: 'DISCARD_CARD', card, player_id: playerId }));
     }
-  }, []);
+  }, [playerId]);
+
+  const takeDiscardPile = useCallback(() => {
+    if (ws.current && playerId) {
+      ws.current.send(JSON.stringify({ action: 'TAKE_DISCARD_PILE', player_id: playerId }));
+    }
+  }, [playerId]);
 
   useEffect(() => {
     if (!gameId) return;
@@ -92,17 +99,7 @@ export const useGame = (gameId?: string) => {
       
       switch (message.type) {
         case 'game_state_update':
-        case 'game_started':
           setGameState(message.payload);
-          break;
-        case 'player_joined':
-          setGameState(prevState => {
-            if (!prevState) return null;
-            return {
-              ...prevState,
-              players: [...prevState.players, message.payload]
-            }
-          });
           break;
         case 'player_connected':
         case 'player_disconnected':
@@ -128,5 +125,5 @@ export const useGame = (gameId?: string) => {
     };
   }, [gameId, fetchGameState]);
 
-  return { gameState, error, joinGame, startGame, createMeld, addToMeld, drawFromDeck, discardCard };
+  return { gameState, error, joinGame, startGame, createMeld, addToMeld, drawFromDeck, discardCard, takeDiscardPile };
 };
