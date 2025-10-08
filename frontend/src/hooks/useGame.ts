@@ -42,48 +42,89 @@ export const useGame = (gameId?: string, playerId?: string | null) => {
     }
   }, [gameId]);
 
+  // Track which games have had start requested (persist across renders)
+  const startedGamesRef = useRef<Set<string>>(new Set());
+  const startInProgressRef = useRef<Set<string>>(new Set());
+
   const startGame = useCallback(async () => {
-    if (!gameId) return;
+    console.log(`[useGame] startGame called for gameId: ${gameId}`);
+
+    if (!gameId) {
+      console.log('[useGame] No gameId, returning');
+      return;
+    }
+
+    // Check if already started
+    if (startedGamesRef.current.has(gameId)) {
+      console.warn(`[useGame] ⚠️ Game ${gameId} already started, ignoring duplicate call`);
+      return;
+    }
+
+    // Check if start is in progress
+    if (startInProgressRef.current.has(gameId)) {
+      console.warn(`[useGame] ⚠️ Start in progress for ${gameId}, ignoring duplicate call`);
+      return;
+    }
+
+    console.log(`[useGame] ✓ Starting game ${gameId}`);
+
+    // Mark as in progress
+    startInProgressRef.current.add(gameId);
+    startedGamesRef.current.add(gameId);
+
     try {
       const response = await fetch(`${BASE_URL}/games/${gameId}/start`, {
         method: 'POST',
       });
+
+      console.log(`[useGame] Start response status: ${response.status}`);
+
       if (!response.ok) {
-        throw new Error('Failed to start game');
+        const errorText = await response.text();
+        console.error(`[useGame] ❌ Start failed: ${response.status} - ${errorText}`);
+        // Remove from sets on error so it can be retried
+        startedGamesRef.current.delete(gameId);
+        startInProgressRef.current.delete(gameId);
+        throw new Error(`Failed to start game: ${response.status}`);
       }
-      // The full game state will be updated via WebSocket
+
+      console.log(`[useGame] ✓ Game started successfully`);
+      startInProgressRef.current.delete(gameId);
+
     } catch (err) {
+      console.error(`[useGame] ❌ Exception during start:`, err);
       setError(err instanceof Error ? err.message : 'An unknown error occurred');
+      startInProgressRef.current.delete(gameId);
     }
   }, [gameId]);
 
   const createMeld = useCallback((cards: Card[]) => {
     if (ws.current && playerId) {
-      ws.current.send(JSON.stringify({ action: 'CREATE_MELD', cards, player_id: playerId }));
+      ws.current.send(JSON.stringify({ action: 'meld_cards', cards, player_id: playerId }));
     }
   }, [playerId]);
 
   const addToMeld = useCallback((meldId: number, card: Card) => {
     if (ws.current && playerId) {
-      ws.current.send(JSON.stringify({ action: 'ADD_TO_MELD', meld_id: meldId, card, player_id: playerId }));
+      ws.current.send(JSON.stringify({ action: 'meld_cards', cards: [card], target_meld_id: meldId, player_id: playerId }));
     }
   }, [playerId]);
 
   const drawFromDeck = useCallback(() => {
     if (ws.current && playerId) {
-      ws.current.send(JSON.stringify({ action: 'DRAW_FROM_DECK', player_id: playerId }));
+      ws.current.send(JSON.stringify({ action: 'draw_from_deck', player_id: playerId }));
     }
   }, [playerId]);
 
   const discardCard = useCallback((card: Card) => {
     if (ws.current && playerId) {
-      ws.current.send(JSON.stringify({ action: 'DISCARD_CARD', card, player_id: playerId }));
+      ws.current.send(JSON.stringify({ action: 'discard_card', card, player_id: playerId }));
     }
   }, [playerId]);
 
   const takeDiscardPile = useCallback(() => {
     if (ws.current && playerId) {
-      ws.current.send(JSON.stringify({ action: 'TAKE_DISCARD_PILE', player_id: playerId }));
+      ws.current.send(JSON.stringify({ action: 'take_discard_pile', player_id: playerId }));
     }
   }, [playerId]);
 

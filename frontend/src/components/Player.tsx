@@ -10,7 +10,7 @@ export const Player = ({ player }: { player: PlayerType }) => {
         <h4>Hand:</h4>
         <div style={{ display: 'flex', flexWrap: 'wrap' }}>
           {player.hand.map((card, index) => (
-            <Card key={index} card={card} />
+            <Card key={`${player.player_id}-hand-${card.rank}-${card.suit}-${index}`} card={card} />
           ))}
         </div>
       </div>

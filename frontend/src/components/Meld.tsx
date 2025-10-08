@@ -27,7 +27,7 @@ export const Meld = ({ meld, onDrop }: { meld: MeldType, onDrop: (card: CardType
       }}
     >
       {meld.cards.map((card, index) => (
-        <Card key={index} card={card} />
+        <Card key={`${meld.meld_id}-${card.rank}-${card.suit}-${index}`} card={card} />
       ))}
     </div>
   );

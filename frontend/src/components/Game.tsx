@@ -21,19 +21,52 @@ export const Game = () => {
     discardCard,
     takeDiscardPile,
   } = useGame(gameId, playerId);
-  const gameStartedRef = useRef(false);
+  // Auto-start logic: More robust approach
+  const hasAttemptedAutoStartRef = useRef(false);
 
   useEffect(() => {
-    if (
-      gameState &&
-      !gameState.game_started &&
-      gameState.players.every((p) => p.is_bot) &&
-      !gameStartedRef.current
-    ) {
-      startGame();
-      gameStartedRef.current = true;
+    console.log(`[Game] useEffect triggered`, {
+      hasGameState: !!gameState,
+      gameStarted: gameState?.game_started,
+      playerCount: gameState?.players.length,
+      hasAttempted: hasAttemptedAutoStartRef.current,
+    });
+
+    // Early exits
+    if (!gameState) {
+      console.log('[Game] No gameState, returning');
+      return;
     }
-  }, [gameState, startGame]);
+
+    if (hasAttemptedAutoStartRef.current) {
+      console.log('[Game] Already attempted auto-start, returning');
+      return;
+    }
+
+    if (gameState.game_started) {
+      console.log('[Game] Game already started, marking as attempted');
+      hasAttemptedAutoStartRef.current = true;
+      return;
+    }
+
+    // Check if ready for auto-start
+    const hasEnoughPlayers = gameState.players.length >= 2;
+    const allAreBots = gameState.players.length > 0 && gameState.players.every((p) => p.is_bot);
+
+    console.log('[Game] Auto-start check:', {
+      hasEnoughPlayers,
+      allAreBots,
+      playerCount: gameState.players.length,
+    });
+
+    if (hasEnoughPlayers && allAreBots) {
+      console.log('[Game] ✓ Conditions met, attempting auto-start');
+      hasAttemptedAutoStartRef.current = true;
+      startGame();
+    }
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [gameState?.game_started, gameState?.players.length]); // Only react to these specific changes
 
   const handleJoinGame = async () => {
     const playerName = prompt("Enter your name:");
@@ -96,17 +129,15 @@ export const Game = () => {
             <div className="melds-area bg-slate-800 p-4 rounded-lg">
               <h4 className="text-xl font-bold mb-2">Melds</h4>
               <div className="flex flex-wrap">
-                {gameState.players.map((player) => (
-                  <React.Fragment key={player.player_id}>
-                    {player.melds.map((meld) => (
-                      <Meld
-                        key={meld.id}
-                        meld={meld}
-                        onDrop={(card) => addToMeld(meld.id, card)}
-                      />
-                    ))}
-                  </React.Fragment>
-                ))}
+                {gameState.players.flatMap((player) =>
+                  player.melds.map((meld) => (
+                    <Meld
+                      key={`${player.player_id}-${meld.meld_id}`}
+                      meld={meld}
+                      onDrop={(card) => addToMeld(meld.meld_id, card)}
+                    />
+                  ))
+                )}
                 <MeldArea onDrop={(card) => createMeld([card])} />
               </div>
             </div>

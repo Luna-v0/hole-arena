@@ -5,7 +5,7 @@ export type Card = {
 };
 
 export type Meld = {
-  id: string;
+  meld_id: string;
   cards: Card[];
 };
 
